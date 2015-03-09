@@ -179,6 +179,8 @@ class ClientSpec extends Specification with JsonMatchers {
 
       Await.result(client.search("foo", "{\"query\": { \"match_all\": {} } }"), testDuration).getResponseBody must contain("\"foo2\"")
 
+      val la = Await.result(client.search("foo", "{\"query\": { \"match_all\": {} } }"), testDuration).getResponseBody
+      println(la)
       Await.result(client.count(Seq("foo"), Seq("foo"), "{\"query\": { \"match_all\": {} }"), testDuration).getResponseBody must contain("\"count\"")
 
       Await.result(client.delete("foo", "foo", "foo2"), testDuration).getResponseBody must contain("\"found\"")

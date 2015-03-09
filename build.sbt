@@ -2,9 +2,9 @@ organization := "wabisabi"
 
 name := "wabisabi"
 
-version := "2.0.15"
+version := "2.0.20"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.10.3"
 
 crossScalaVersions := Seq("2.10.4")
 

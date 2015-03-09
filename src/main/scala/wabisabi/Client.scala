@@ -11,7 +11,11 @@ import java.nio.charset.StandardCharsets
 import com.netaporter.uri.Uri
 import com.netaporter.uri.dsl._
 
-class Client(esURL: String) extends Logging {
+class Client(esURL: String, maxConnections: Int = 10, connTimeoutMs: Int = 60000) extends Logging {
+
+  val http = Http.configure(_.setAllowPoolingConnection(true).
+    setMaximumConnectionsTotal(maxConnections).
+    setConnectionTimeoutInMs(connTimeoutMs))
 
   // XXX multiget, update, multisearch, percolate, more like this,
   //
@@ -398,7 +402,7 @@ class Client(esURL: String) extends Logging {
   private def doRequest(req: Req) = {
     val breq = req.toRequest
     debug("%s: %s".format(breq.getMethod, breq.getUrl))
-    Http(req.setHeader("Content-type", "application/json; charset=utf-8"))
+    http(req.setHeader("Content-type", "application/json; charset=utf-8"))
   }
 
 
