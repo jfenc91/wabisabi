@@ -12,7 +12,7 @@ import com.netaporter.uri.Uri
 import com.netaporter.uri.dsl._
 
 class Client(esURL: String, maxConnections: Int = 10, connTimeoutMs: Int = 60000) extends Logging {
-
+  
   val http = Http.configure(_.setAllowPoolingConnection(true).
     setMaximumConnectionsTotal(maxConnections).
     setConnectionTimeoutInMs(connTimeoutMs))
@@ -73,8 +73,8 @@ class Client(esURL: String, maxConnections: Int = 10, connTimeoutMs: Int = 60000
     val sreq = settings.map({ s => req.setBody(s.getBytes(StandardCharsets.UTF_8)) }).getOrElse(req)
 
     // Do something hinky to get the trailing slash on the URL
-    val trailedReq = Req(_.setUrl(sreq.toRequest.getUrl + "/"))
-    doRequest(trailedReq.PUT)
+    //val trailedReq = Req(_.setUrl(sreq.toRequest.getUrl + "/").setHeaders(sreq.toRequest.getHeaders))
+    doRequest(sreq.PUT)
   }
 
   /**
@@ -417,13 +417,9 @@ class Client(esURL: String, maxConnections: Int = 10, connTimeoutMs: Int = 60000
     })
 
     val req = if (uri.user.isDefined && uri.password.isDefined) {
-
-      dispatch.url(protocol+"://"+uri.host.get+":"+port).as_!(uri.user.get, uri.password.get)
-    }
-
-    else {
-      dispatch.url(protocol+"://"+uri.host.get+":"+port)
-
+      dispatch.url(protocol + "://" + uri.host.get + ":" + port).as_!(uri.user.get, uri.password.get)
+    } else {
+      dispatch.url(protocol + "://" + uri.host.get + ":" + port)
     }
 
     protocol match {
@@ -434,12 +430,8 @@ class Client(esURL: String, maxConnections: Int = 10, connTimeoutMs: Int = 60000
         dispatch.url("")
       }
     }
-
-
   }
-}
 
-object Client {
   /**
    * Disconnects any remaining connections. Both idle and active. If you are accessing
    * Elasticsearch through a proxy that keeps connections alive this is useful.
@@ -448,6 +440,6 @@ object Client {
    * will also terminate.
    */
   def shutdown() {
-    Http.shutdown()
+    http.shutdown()
   }
 }

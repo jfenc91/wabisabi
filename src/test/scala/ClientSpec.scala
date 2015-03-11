@@ -32,6 +32,7 @@ class ClientSpec extends Specification with JsonMatchers {
 
       Await.result(client.createIndex(name = "foo"), testDuration).getResponseBody must contain("acknowledged")
 
+      println("creating foo" + Await.result(client.createIndex(name = "foo"), testDuration).getResponseBody)
       Await.result(client.verifyIndex("foo"), testDuration)
 
       Await.result(client.deleteIndex("foo"), testDuration).getResponseBody must contain("acknowledged")
